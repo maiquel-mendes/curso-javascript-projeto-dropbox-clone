@@ -28,10 +28,19 @@ class DropBoxController {
            
             this.uploadTask(event.target.files)
 
-            this.snackModalEl.style.display = 'block';
+            this.modalShow();
+
+            this.inputFilesEl.value = '';
+
+            
         })
 
 
+    }
+
+    modalShow(show = true) {
+        
+        this.snackModalEl.style.display = (show) ? 'block' : 'none';
     }
 
     uploadTask(files) {
@@ -46,8 +55,10 @@ class DropBoxController {
 
                 ajax.open('POST', '/upload');
 
+                
                 ajax.onload = event => {
-
+                    this.modalShow(false);
+                    
                     try {
                         resolve(JSON.parse(ajax.responseText));
                     } catch (e) {
@@ -56,6 +67,9 @@ class DropBoxController {
                 }
 
                 ajax.onerror = event => {
+                
+                    this.modalShow(false);
+
                     reject(event);
                 };
 
@@ -91,7 +105,7 @@ class DropBoxController {
         
         this.progressBarEl.style.width = porcent+'%';
 
-        this.nameFileEl.innerHTML = file.name;
+        this.nameFileEl.innerHTML = file.name + ' - Tempo estimado: ';
         this.timeLeftEl.innerHTML = this.formatTimeToHuman(timeleft);
 
         console.log(timespent, timeleft, porcent)
